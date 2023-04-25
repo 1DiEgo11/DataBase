@@ -14,8 +14,20 @@ static List<User> bd()
             User user = new User();
             string textFromFile = fstream.ReadLine();
             if (textFromFile == null) break;
-            user.id = int.Parse(textFromFile.Substring(0, 1));
-            textFromFile = textFromFile.Substring(2);
+            foreach (char i in textFromFile)
+            {
+                if (i != ' ')
+                {
+                    user.id = user.id * 10 + int.Parse(textFromFile.Substring(0, 1));
+                    textFromFile = textFromFile.Substring(1);
+                }
+                else
+                {
+                    textFromFile = textFromFile.Substring(1);
+                    break;
+                }
+            }
+
             foreach (char i in textFromFile)
             {
                 if (i != ' ')
