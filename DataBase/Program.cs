@@ -111,11 +111,13 @@ while (true)
                     s = "used";
                 }
             }
-            if (k == 0) s = "not foud"; 
+            if (k == 0) s = "not found"; // + свободный айди 
             break;
         case 4:
             request = request[2..];
-            s = Bookings.Link_Table(request);
+            s = Bookings.Get_Link_Table(request);
+            break;
+        case 5:
             break;
     }
     ReceivingAndSending.Sending(stream, s);
