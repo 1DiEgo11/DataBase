@@ -4,10 +4,10 @@ using System.Text;
 using Server_Client;
 
 //чтение файла
-static List<User> bd()
+static List<User> bd_user()
 {
     var bd = new List<User>();
-    using (StreamReader fstream = new StreamReader("note2.txt"))
+    using (StreamReader fstream = new StreamReader("users.txt"))
     {
         while (true)
         {
@@ -62,41 +62,19 @@ static void Write(List<User> list)
     }
 }
 
-
-static bool Reg(string log)
-{
-    List<User> list = bd();
-    foreach (var us in list)
-    {
-        if (us.login == log) return false;
-    }
-    return true;
-}
-
-static string sing(string log)
-{
-    List<User> list = bd();
-    foreach (var us in list)
-    {
-        if (us.login == log) return us.password;
-    }
-    return "неверный логин";
-}
-
-TcpListener server = new TcpListener(IPAddress.Any, 8080);
+TcpListener server = new(IPAddress.Any, 7000);
 server.Start();
-List<User> list = bd();
+List<User> list = bd_user();
 int c = 0;
 
-string s = "Привет!";
+string s = "";
 while (true)
 {
     int k = 0;
     TcpClient client = server.AcceptTcpClient();
     NetworkStream stream = client.GetStream();
-    ReceivingAndSending.Sending(stream, s);
+
     string request = ReceivingAndSending.Receiving(stream);
-    if (request == "Привет") continue;
     c = int.Parse(request.Substring(0, 1));
     request = request.Substring(2);
     foreach (var us in list)
@@ -116,9 +94,8 @@ while (true)
         }
     }
     if (k == 0) s = "not found";
-    Console.WriteLine("Got req: " + request);
-
-
+    Console.WriteLine("Отправил: " + s);
+    ReceivingAndSending.Sending(stream, s);
 }
 
 server.Stop();
