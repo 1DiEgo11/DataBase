@@ -62,6 +62,8 @@ static void Write(List<User> list, FileStream stream)
     }
 }
 
+
+//Ссылка на папку userов!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 string path = @"C:\Users\asus\source\repos\DB\DataBase\users.txt";
 FileStream users_txt = new(path, FileMode.OpenOrCreate);
 
