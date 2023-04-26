@@ -1,5 +1,6 @@
 ﻿using System.Net.Sockets;
 using System.Text;
+using System;
 
 namespace Server_Client
 {
@@ -11,7 +12,8 @@ namespace Server_Client
             int lenght = stream.Read(bytes, 0, bytes.Length);
             string request = Encoding.UTF8.GetString(bytes, 0, lenght);
             return request;
-        }
+        }//suck my cockies
+
 
         public static void Sending(NetworkStream stream, string s)
         {
