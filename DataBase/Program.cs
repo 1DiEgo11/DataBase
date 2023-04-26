@@ -4,10 +4,10 @@ using System.Text;
 using Server_Client;
 
 //чтение файла
-static List<User> bd_user()
+static List<User> bd_user(FileStream stream)
 {
     var bd = new List<User>();
-    using (StreamReader fstream = new StreamReader("users.txt"))
+    using (StreamReader fstream = new StreamReader(stream))
     {
         while (true)
         {
@@ -50,9 +50,9 @@ static List<User> bd_user()
 }
 
 ////запись в файл
-static void Write(List<User> list)
+static void Write(List<User> list, FileStream stream)
 {
-    using (StreamWriter fstream = new StreamWriter("note2.txt"))
+    using (StreamWriter fstream = new StreamWriter(stream))
     {
         foreach (var us in list)
         {
@@ -62,9 +62,14 @@ static void Write(List<User> list)
     }
 }
 
+string path = @"C:\Users\asus\source\repos\DB\DataBase\users.txt";
+FileStream users_txt = new(path, FileMode.OpenOrCreate);
+
+
+
 TcpListener server = new(IPAddress.Any, 7000);
 server.Start();
-List<User> list = bd_user();
+List<User> list = bd_user(users_txt);
 int c = 0;
 
 string s = "";
@@ -85,7 +90,7 @@ while (true)
             switch (c)
             {
                 case 1:
-                    s = us.id.ToString() + "/" + us.password;
+                    s = us.id.ToString() + "/" + us.password + "/" + us.isAdmin;
                     break;
                 case 2:
                     s = "used";
@@ -94,8 +99,8 @@ while (true)
         }
     }
     if (k == 0) s = "not found";
-    Console.WriteLine("Отправил: " + s);
     ReceivingAndSending.Sending(stream, s);
+    Console.WriteLine("Отправил: " + s);
 }
 
 server.Stop();
