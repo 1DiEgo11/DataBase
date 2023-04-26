@@ -2,6 +2,8 @@
 using System.Net;
 using System.Text;
 using Server_Client;
+using Booking;
+
 
 //чтение файла
 static List<User> bd_user(FileStream stream)
@@ -83,24 +85,39 @@ while (true)
 
     string request = ReceivingAndSending.Receiving(stream);
     c = int.Parse(request.Substring(0, 1));
-    request = request.Substring(2);
-    foreach (var us in list)
+    
+
+    switch (c)
     {
-        if (us.login == request)
-        {
-            k = 1;
-            switch (c)
+        case 1:
+            request = request.Substring(2);
+            foreach(var us in list)
             {
-                case 1:
+                if (us.login == request)
+                {
+                    k = 1;
                     s = us.id.ToString() + "/" + us.password + "/" + us.isAdmin;
-                    break;
-                case 2:
-                    s = "used";
-                    break;
+                }
             }
-        }
+            if (k == 0) s = "not found";
+            break;
+        case 2:
+            request = request.Substring(2);
+            foreach (var us in list)
+            {
+                if (us.login == request)
+                {
+                    k = 1;
+                    s = "used";
+                }
+            }
+            if (k == 0) s = "not foud"; 
+            break;
+        case 4:
+            request = request[2..];
+            s = Bookings.Link_Table(request);
+            break;
     }
-    if (k == 0) s = "not found";
     ReceivingAndSending.Sending(stream, s);
     Console.WriteLine("Отправил: " + s);
 }
