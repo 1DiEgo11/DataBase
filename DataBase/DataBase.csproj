@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FilesAndConvertation\FilesAndConvertation.csproj" />
     <ProjectReference Include="..\Link\Booking.csproj" />
     <ProjectReference Include="..\Server-Client\Server-Client.csproj" />
   </ItemGroup>

@@ -52,13 +52,12 @@ static List<User> bd_user(FileStream stream)
 }
 
 ////запись в файл
-static void Write(List<User> list, FileStream stream)
+static void Write(List<User> list, string path)
 {
-    using (StreamWriter fstream = new StreamWriter(stream))
+    using (StreamWriter fstream = new StreamWriter(path))
     {
         foreach (var us in list)
         {
-
             fstream.WriteLine($"{us.id} {us.login} {us.password} {us.isAdmin}");
         }
     }
@@ -84,6 +83,7 @@ while (true)
     NetworkStream stream = client.GetStream();
 
     string request = ReceivingAndSending.Receiving(stream);
+    Console.WriteLine("Принял: " + request);
     c = int.Parse(request.Substring(0, 1));
     
 
@@ -102,25 +102,71 @@ while (true)
             if (k == 0) s = "not found";
             break;
         case 2:
+            int id = 1;
             request = request.Substring(2);
             foreach (var us in list)
             {
+                id = us.id + 1;
                 if (us.login == request)
                 {
                     k = 1;
                     s = "used";
                 }
             }
-            if (k == 0) s = "not found"; // + свободный айди 
+            if (k == 0) s = "not found/" + id.ToString();
+            break;
+        case 3:
+            User user = new User();
+            foreach (char i in request)
+            {
+                if (i != '/')
+                {
+                    user.id = user.id * 10 + int.Parse(request.Substring(0, 1));
+                    request = request.Substring(1);
+                }
+                else
+                {
+                    request = request.Substring(1);
+                    break;
+                }
+            }
+            foreach (char i in request)
+            {
+                if (i != '/')
+                {
+                    user.login += i;
+                    request = request.Substring(1);
+                }
+                else
+                {
+                    user.password = request.Substring(1);
+                    user.isAdmin = 0;
+                    break;
+                }
+            }
+            list.Add(user);
+            Write(list, path);
             break;
         case 4:
             request = request[2..];
             s = Bookings.Get_Link_Table(request);
             break;
         case 5:
+            string str1 = request[2..];
+            Console.WriteLine(str1);
+            Bookings.Set_Link_Table(str1);
+            break;
+        case 6:
+            s = "";
+            string s1 = request[2..];
+            string[] s2 = s1.Split(new char[] {' ', '/', '\n'}, StringSplitOptions.RemoveEmptyEntries);
+            Console.WriteLine(s2[0] + s2[1] + s2[2]);
+            Bookings.Del_Booking(s2[0], s2[1] + " " + s2[2] + " " + s2[3] + " " + s2[4]);
             break;
     }
     ReceivingAndSending.Sending(stream, s);
+    Console.ForegroundColor = ConsoleColor.Black;
+    Console.BackgroundColor = ConsoleColor.Yellow;
     Console.WriteLine("Отправил: " + s);
 }
 
