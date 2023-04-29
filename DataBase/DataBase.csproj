@@ -11,6 +11,7 @@
     <ProjectReference Include="..\FilesAndConvertation\FilesAndConvertation.csproj" />
     <ProjectReference Include="..\Link\Booking.csproj" />
     <ProjectReference Include="..\Server-Client\Server-Client.csproj" />
+    <ProjectReference Include="..\User\User.csproj" />
   </ItemGroup>
 
 </Project>

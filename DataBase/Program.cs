@@ -3,13 +3,13 @@ using System.Net;
 using System.Text;
 using Server_Client;
 using Booking;
-
+using Users;
 
 //чтение файла
 static List<User> bd_user(FileStream stream)
 {
     var bd = new List<User>();
-    using (StreamReader fstream = new StreamReader(stream))
+    using (StreamReader fstream = new(stream))
     {
         while (true)
         {
@@ -116,6 +116,7 @@ while (true)
             if (k == 0) s = "not found/" + id.ToString();
             break;
         case 3:
+            request = request.Substring(2);
             User user = new User();
             foreach (char i in request)
             {
@@ -149,7 +150,7 @@ while (true)
             break;
         case 4:
             request = request[2..];
-            s = Bookings.Get_Link_Table(request);
+            s = Bookings.Get_Link_Table(request, list);
             break;
         case 5:
             string str1 = request[2..];
@@ -160,8 +161,7 @@ while (true)
             s = "";
             string s1 = request[2..];
             string[] s2 = s1.Split(new char[] {' ', '/', '\n'}, StringSplitOptions.RemoveEmptyEntries);
-            Console.WriteLine(s2[0] + s2[1] + s2[2]);
-            Bookings.Del_Booking(s2[0], s2[1] + " " + s2[2] + " " + s2[3] + " " + s2[4]);
+            Bookings.Del_Booking(s2[0], s2[1] + " " + s2[2] + " " + s2[3] + " " + s2[4], list);
             break;
     }
     ReceivingAndSending.Sending(stream, s);
@@ -172,11 +172,5 @@ while (true)
 
 server.Stop();
 
-public class User
-{
-    public string login = "";
-    public string password = "";
-    public int isAdmin;
-    public int id = 0;
-};
+
 

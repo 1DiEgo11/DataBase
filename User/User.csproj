@@ -6,9 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\FilesAndConvertation\FilesAndConvertation.csproj" />
-    <ProjectReference Include="..\User\User.csproj" />
-  </ItemGroup>
-
 </Project>

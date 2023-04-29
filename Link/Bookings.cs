@@ -1,16 +1,24 @@
 ﻿using FilesAndConvertation;
 using System;
 using System.Text;
+using Users;
 
 namespace Booking
 {
     public class Bookings
     {
-        public static string Get_Link_Table(string id)
+        public static string Get_Link_Table(string com, List<User> list)
         {
+            string[] settings = com.Split(new char[] {'/', ' ', '\n'}, StringSplitOptions.RemoveEmptyEntries);
+            string id = settings[0];
+            string IsAdmin = settings[1];
+            string all = settings[2];
+
             string path = @"C:\Users\asus\source\repos\DB\DataBase\Link.txt";
             FileStream Link_txt = new(path, FileMode.OpenOrCreate);
-
+            
+            
+            var swit = new Switches();
             int k = 0;
             string s;
             string send = "";
@@ -21,20 +29,35 @@ namespace Booking
                 {
                     s = file.ReadLine();
                     if (s == null) break;
-                    if (s[..1] == id)
+                    if (IsAdmin == "0" || all == "0")
                     {
-                        k = 1;
-                        send += s[2..] + ' ';
+                        if (s[..1] == id)
+                        {
+                            k = 1;
+                            send += s[2..] + "/";
+                        }
+                        else continue;
                     }
-                    else continue;
+                    else if( IsAdmin == "1" && all == "1") 
+                    {
+                        foreach (var us in list)
+                        {
+                            if (us.id == int.Parse(s[..1]))
+                            {
+                                k = 1;
+                                send += us.login + "/";
+                                send += swit.Convert_in_com(s[2..]) + "/";
+                            }
+                        }   
+                    }
                 }
                 file.Close();
                 Link_txt.Close();
             }
             
             send = send.Replace(' ', '/');
-            var swit = new Switches();
-            send = swit.Convert_in_com(send);
+
+            if (IsAdmin == "0" || all == "0") { send = swit.Convert_in_com(send); };
             if (k == 0) { send = " "; };
             return send;
         }
@@ -45,39 +68,31 @@ namespace Booking
             writer.WriteLine(command);
             writer.Close();
         }
-        public static void Del_Booking(string id, string com)
+        public static void Del_Booking(string id, string com, List<User> users)
         {
             
             string path = @"C:\Users\asus\source\repos\DB\DataBase\Link.txt";
-            //FileStream Link_txt = new(path, FileMode.OpenOrCreate);
-            Console.WriteLine(com);
+
+            
             var swit = new Switches();
             com = swit.Convert_from_com(com);
-            Console.WriteLine("a");
-            Console.WriteLine(com);
-
-            var re = File.ReadAllLines(path, Encoding.Default).Where(s => s != id + ' ' + com );
-            File.WriteAllLines(path, re, Encoding.Default);
-
-            //string s;
-            //using (StreamReader file0n = new(Link_txt))
-            //{
-            //    while (true)
-            //    {
-            //        s = file0n.ReadLine();
-            //        if (s == null) break;
-            //        if (s[..1] == id && s[2..] == com)
-            //        {
-            //            file0n.Close();
-            //            Link_txt.Close();
-            //            var re = File.ReadAllLines(path, Encoding.Default).Where(s => !s.Contains(com));
-            //            File.WriteAllLines(path, re, Encoding.Default);
-            //        }
-            //        else continue;
-            //    }
-            //    file0n.Close();
-            //    Link_txt.Close();
-            //}
+            if(int.TryParse(id, out int n) == true)
+            {
+                var re = File.ReadAllLines(path, Encoding.Default).Where(s => s != id + ' ' + com);
+                File.WriteAllLines(path, re, Encoding.Default);
+            }
+            else
+            {
+                foreach ( var user in users)
+                {
+                    if(user.login == id)
+                    {
+                        id = user.id.ToString();
+                    }
+                }
+                var re = File.ReadAllLines(path, Encoding.Default).Where(s => s != id + ' ' + com);
+                File.WriteAllLines(path, re, Encoding.Default);
+            }
         }
     }
 }
